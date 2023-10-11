@@ -131,6 +131,13 @@ Fastrcnn_function_query = """CREATE FUNCTION IF NOT EXISTS FastRCNNObjectDetecto
     EvaDB_INSTALLATION_DIR
 )
 
+Divexplorer_function_query = """CREATE FUNCTION IF NOT EXISTS DivExplorer
+        IMPL '{}/functions/divexplorer.py';
+        Type FeatureExtraction;
+""".format(
+    EvaDB_INSTALLATION_DIR
+)
+
 Yolo_function_query = """CREATE FUNCTION IF NOT EXISTS Yolo
       TYPE  ultralytics
       MODEL 'yolov8m.pt';
