@@ -33,19 +33,19 @@ class DivExplorer(AbstractFunction):
     def name(self) -> str:
         return "DivExplorer"
 
-    @forward(
-        input_signatures=[
-            PandasDataframe(
-                columns=["predicted", "true"],
-            )
-        ],
-        output_signatures=[
-            PandasDataframe(
-                columns=["itemset", "support"],
-                # column_types=[NdArrayType.STR, NdArrayType.FLOAT32],
-            )
-        ],
-    )
+    # @forward(
+    #     input_signatures=[
+    #         PandasDataframe(
+    #             columns=["predicted", "true"],
+    #         )
+    #     ],
+    #     output_signatures=[
+    #         PandasDataframe(
+    #             columns=["itemset", "support"],
+    #             # column_types=[NdArrayType.STR, NdArrayType.FLOAT32],
+    #         )
+    #     ],
+    # )
     def forward(self, df: pd.DataFrame):
         fp_diver = FP_DivergenceExplorer(
             df, true_class_name="class", 

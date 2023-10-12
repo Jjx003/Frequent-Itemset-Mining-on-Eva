@@ -33,6 +33,7 @@ class AbstractFunction(metaclass=ABCMeta):
         self.setup(*args, **kwargs)
 
     def __call__(self, *args, **kwargs):
+        print('Corresponding kwargs', **kwargs)
         return self.forward(args[0])
 
     def __str__(self):

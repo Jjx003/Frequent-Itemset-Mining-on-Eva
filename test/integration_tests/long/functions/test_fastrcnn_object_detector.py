@@ -27,6 +27,7 @@ class FastRCNNObjectDetectorTest(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.base_path = os.path.dirname(os.path.abspath(__file__))
+        print(self.base_path, 'is base path')
 
     def _load_image(self, path):
         try_to_import_cv2()
