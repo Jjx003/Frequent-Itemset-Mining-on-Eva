@@ -11,7 +11,7 @@ from evadb.functions.decorators.io_descriptors.data_types import PandasDataframe
 
 
 class DivExplorer(AbstractFunction):
-    @setup(cacheable=True, function_type="FeatureExtraction", batchable=False)
+    # @setup(cacheable=True, function_type="FeatureExtraction", batchable=False)
     def setup(
         self,
         min_support: float = 0.1,
@@ -33,20 +33,29 @@ class DivExplorer(AbstractFunction):
     def name(self) -> str:
         return "DivExplorer"
 
-    # @forward(
-    #     input_signatures=[
-    #         PandasDataframe(
-    #             columns=["predicted", "true"],
-    #         )
-    #     ],
-    #     output_signatures=[
-    #         PandasDataframe(
-    #             columns=["itemset", "support"],
-    #             # column_types=[NdArrayType.STR, NdArrayType.FLOAT32],
-    #         )
-    #     ],
-    # )
-    def forward(self, df: pd.DataFrame):
+    @forward(
+        input_signatures=[
+            PandasDataframe(
+                columns=["class", "predicted"],
+                column_types=[
+                    NdArrayType.UINT8,
+                    NdArrayType.UINT8,
+                ],
+                column_shapes=[(None,), (None,), (None,)]
+            )
+        ],
+        output_signatures=[
+            PandasDataframe(
+                columns=["length"],
+                column_types=[
+                    NdArrayType.STR,
+                ],
+                column_shapes=[(None,),]
+            )
+        ],
+    )
+    def forward(self, df: pd.DataFrame) -> pd.DataFrame:
+        print(df, 'hi')
         fp_diver = FP_DivergenceExplorer(
             df, true_class_name="class", 
             predicted_class_name="predicted", class_map={'N': 0, 'P': 1}
@@ -63,8 +72,10 @@ class DivExplorer(AbstractFunction):
             topK_df_metric = fp_divergence_metric.getDivergenceTopKDf(
                 K=self.top_k, th_redundancy=self.th_redundancy
             )
+            print(topK_df_metric, 'hi')
             return topK_df_metric
-        
+
+        print(result_divexplore, 'ba')
         return result_divexplore
 
 

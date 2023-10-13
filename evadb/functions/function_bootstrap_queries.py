@@ -132,7 +132,7 @@ Fastrcnn_function_query = """CREATE FUNCTION IF NOT EXISTS FastRCNNObjectDetecto
 )
 
 Divexplorer_function_query = """CREATE FUNCTION IF NOT EXISTS DivExplorer
-        IMPL  '{}/functions/divexplorer.py';
+        IMPL '{}/functions/divexplorer.py';
 """.format(
     EvaDB_INSTALLATION_DIR
 )
@@ -275,5 +275,6 @@ def init_builtin_functions(db: EvaDBDatabase, mode: str = "debug") -> None:
             execute_query_fetch_all(
                 db, query, do_not_print_exceptions=False, do_not_raise_exceptions=True
             )
-        except Exception:
+        except Exception as e:
+            print('Exception in executing', query, e)
             pass
