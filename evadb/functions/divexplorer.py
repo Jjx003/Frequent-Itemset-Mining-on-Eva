@@ -11,7 +11,7 @@ from evadb.functions.decorators.io_descriptors.data_types import PandasDataframe
 
 
 class DivExplorer(AbstractFunction):
-    # @setup(cacheable=True, function_type="FeatureExtraction", batchable=False)
+    @setup(cacheable=True, function_type="FeatureExtraction", batchable=True)
     def setup(
         self,
         min_support: float = 0.1,
@@ -41,16 +41,21 @@ class DivExplorer(AbstractFunction):
                     NdArrayType.UINT8,
                     NdArrayType.UINT8,
                 ],
-                column_shapes=[(None,), (None,), (None,)]
+                column_shapes=[(None,), (None,)]
             )
         ],
         output_signatures=[
             PandasDataframe(
-                columns=["length"],
+                columns=["itemsets", "support", "support_count", "fpr", "d_fpr", "t_value_fp"],
                 column_types=[
                     NdArrayType.STR,
+                    NdArrayType.FLOAT32,
+                    NdArrayType.UINT8,
+                    NdArrayType.FLOAT32,
+                    NdArrayType.FLOAT32,
+                    NdArrayType.FLOAT32,
                 ],
-                column_shapes=[(None,),]
+                column_shapes=[(None,), (None,), (None,), (None,), (None,), (None,)]
             )
         ],
     )
