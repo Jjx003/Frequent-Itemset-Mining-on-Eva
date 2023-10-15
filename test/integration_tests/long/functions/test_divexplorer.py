@@ -78,7 +78,7 @@ class DivExplorerTest(unittest.TestCase):
         execute_query_fetch_all(self.evadb, create_fn_query)
 
         select_query = """
-        SELECT DivExplorer(age, charge, race, sex, n_prior, stay, class, predicted) from MyCompas;
+        SELECT DivExplorer(age, charge, race, sex, n_prior, stay, class, predicted) from MyCompas GROUP BY '6172 age';
         """
         # select_query = """
         # SELECT * FROM DivExplorer(MyCompas);
