@@ -60,7 +60,6 @@ class DivExplorer(AbstractFunction):
         ],
     )
     def forward(self, df: pd.DataFrame) -> pd.DataFrame:
-        print(df, 'hi')
         fp_diver = FP_DivergenceExplorer(
             df, true_class_name="class", 
             predicted_class_name="predicted", class_map={'N': 0, 'P': 1}
@@ -68,8 +67,6 @@ class DivExplorer(AbstractFunction):
         result_divexplore = fp_diver.getFrequentPatternDivergence(
             min_support=self.min_support, metrics=[self.metric], # TODO: Add max_len to DivExplorer, and multiple metrics
         )
-        #         fp["support_count"] = (fp["support"] * len(df)).astype(int)
-        #         fp = pd.concat([pd.Series(row_root).to_frame().T, fp], ignore_index=True)
         if self.top_k is not None:
             fp_divergence_metric = FP_Divergence(
                 result_divexplore, self.metric
@@ -77,10 +74,8 @@ class DivExplorer(AbstractFunction):
             topK_df_metric = fp_divergence_metric.getDivergenceTopKDf(
                 K=self.top_k, th_redundancy=self.th_redundancy
             )
-            print(topK_df_metric, 'hi')
             return topK_df_metric
 
-        print(result_divexplore, 'ba')
         return result_divexplore
 
 
