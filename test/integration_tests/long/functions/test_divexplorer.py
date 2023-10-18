@@ -24,71 +24,71 @@ class DivExplorerTest(unittest.TestCase):
         execute_query_fetch_all(self.evadb, "DROP TABLE IF EXISTS MyCompas;")
         execute_query_fetch_all(self.evadb, "DROP TABLE IF EXISTS MyCompasLearn;")
     
-    # def test_divexplorer_runs(self):
-    #     from evadb.functions.divexplorer import DivExplorer
+    def test_divexplorer_runs(self):
+        from evadb.functions.divexplorer import DivExplorer
 
-    #     divex = DivExplorer(
-    #         min_support=0.1,
-    #         ignore_cols=None,
-    #         th_redundancy=None,
-    #         top_k=None,
-    #     )
+        divex = DivExplorer(
+            min_support=0.1,
+            ignore_cols=None,
+            th_redundancy=None,
+            top_k=None,
+        )
 
-    #     df = pd.read_csv(compas_dataset)
-    #     result = divex(df)
-    #     self.assertTrue(result is not None)
+        df = pd.read_csv(compas_dataset)
+        result = divex(df)
+        self.assertTrue(result is not None)
 
-    # def test_divexplorer_runs_with_top_k(self):
-    #     from evadb.functions.divexplorer import DivExplorer
+    def test_divexplorer_runs_with_top_k(self):
+        from evadb.functions.divexplorer import DivExplorer
 
-    #     divex = DivExplorer(
-    #         min_support=0.05,
-    #         ignore_cols=None,
-    #         th_redundancy=0.05,
-    #         top_k=10,
-    #     )
+        divex = DivExplorer(
+            min_support=0.05,
+            ignore_cols=None,
+            th_redundancy=0.05,
+            top_k=10,
+        )
 
-    #     df = pd.read_csv(compas_dataset)
-    #     result = divex(df)
-    #     self.assertTrue(result is not None)
+        df = pd.read_csv(compas_dataset)
+        result = divex(df)
+        self.assertTrue(result is not None)
 
-    # def test_divexplorer_via_query(self):
-    #     import time
+    def test_divexplorer_via_query(self):
+        import time
 
 
-    #     create_table_query = """
-    #         CREATE TABLE IF NOT EXISTS MyCompas (
-    #             age INTEGER,
-    #             charge TEXT(30),
-    #             race TEXT(30),
-    #             sex TEXT(10),
-    #             n_prior TEXT(30),
-    #             stay TEXT(10),
-    #             class INTEGER,
-    #             predicted INTEGER
-    #         );
-    #     """
-    #     load_query = f"LOAD CSV '{compas_dataset}' INTO MyCompas;"
+        create_table_query = """
+            CREATE TABLE IF NOT EXISTS MyCompas (
+                age INTEGER,
+                charge TEXT(30),
+                race TEXT(30),
+                sex TEXT(10),
+                n_prior TEXT(30),
+                stay TEXT(10),
+                class INTEGER,
+                predicted INTEGER
+            );
+        """
+        load_query = f"LOAD CSV '{compas_dataset}' INTO MyCompas;"
 
-    #     execute_query_fetch_all(self.evadb, create_table_query)
-    #     execute_query_fetch_all(self.evadb, load_query)
-    #     # print(execute_query_fetch_all(self.evadb, "SELECT * FROM MyCompas LIMIT 10;"))
+        execute_query_fetch_all(self.evadb, create_table_query)
+        execute_query_fetch_all(self.evadb, load_query)
+        # print(execute_query_fetch_all(self.evadb, "SELECT * FROM MyCompas LIMIT 10;"))
 
-    #     create_fn_query = (
-    #         f"""CREATE FUNCTION IF NOT EXISTS DivExplorer
-    #             IMPL  '{EvaDB_ROOT_DIR}/evadb/functions/divexplorer.py';"""
-    #     )
-    #     execute_query_fetch_all(self.evadb, create_fn_query)
+        create_fn_query = (
+            f"""CREATE FUNCTION IF NOT EXISTS DivExplorer
+                IMPL  '{EvaDB_ROOT_DIR}/evadb/functions/divexplorer.py';"""
+        )
+        execute_query_fetch_all(self.evadb, create_fn_query)
 
-    #     t = time.time()
-    #     select_query = """
-    #     SELECT DivExplorer(age, charge, race, sex, n_prior, stay, class, predicted) from MyCompas GROUP BY '6172 age';
-    #     """
-    #     # select_query = """
-    #     # SELECT * FROM DivExplorer(MyCompas);
-    #     # """
-    #     print(execute_query_fetch_all(self.evadb, select_query))
-    #     print('overall time', time.time() - t)
+        t = time.time()
+        select_query = """
+        SELECT DivExplorer(age, charge, race, sex, n_prior, stay, class, predicted) from MyCompas GROUP BY '6172 age';
+        """
+        # select_query = """
+        # SELECT * FROM DivExplorer(MyCompas);
+        # """
+        print(execute_query_fetch_all(self.evadb, select_query))
+        print('overall time', time.time() - t)
 
     def test_divexplorer_sklearn_train(self):
         from sklearn.model_selection import train_test_split
