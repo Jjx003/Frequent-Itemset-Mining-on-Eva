@@ -87,7 +87,8 @@ class DivExplorerTest(unittest.TestCase):
         # select_query = """
         # SELECT * FROM DivExplorer(MyCompas);
         # """
-        print(execute_query_fetch_all(self.evadb, select_query))
+        result = execute_query_fetch_all(self.evadb, select_query)
+        print(result._frames.sort_values(by=['divexplorer.d_fpr'], ascending=True))
         print('overall time', time.time() - t)
 
     def test_divexplorer_sklearn_train(self):
@@ -112,8 +113,8 @@ class DivExplorerTest(unittest.TestCase):
         X_train, X_test, y_train, y_test = train_test_split(df_X, df_truth, test_size=0.20, random_state=random_state)
         model = RandomForestClassifier(n_estimators=100, random_state=random_state)
         model.fit(X_train, y_train)
-
         results = model.predict(X_test)
+        print('accuracy', model.score(X_test, y_test))
 
         df_test = pd.DataFrame(X_test, columns=df.columns)
         df_test_actual = pd.DataFrame(y_test, columns=['class'])
@@ -152,6 +153,4 @@ class DivExplorerTest(unittest.TestCase):
         """
         # print(execute_query_fetch_all(self.evadb, select_query)._frames.sort_values(by=['d_fpr'], ascending=False))
         result = execute_query_fetch_all(self.evadb, select_query)
-        print(result._frames)
-        print(type(result._frames))
         print(result._frames.sort_values(by=['divexplorer.d_fpr'], ascending=True))
