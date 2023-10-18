@@ -1,3 +1,4 @@
+import time
 from typing import List, Optional
 
 from divexplorer.FP_DivergenceExplorer import FP_DivergenceExplorer
@@ -21,6 +22,8 @@ class DivExplorer(AbstractFunction):
         ignore_cols: List[str] = None,
         th_redundancy: Optional[float] = None,
         top_k: Optional[int] = None,
+        discretize: bool = False,
+        discretize_bins: int = 5,
     ):
         self.min_support = min_support
         self.max_len = max_len
@@ -28,10 +31,27 @@ class DivExplorer(AbstractFunction):
         self.ignore_cols = ignore_cols
         self.th_redundancy = th_redundancy
         self.top_k = top_k
+        self.discretize = discretize
+        self.discretize_bins = discretize_bins
 
     @property
     def name(self) -> str:
         return "DivExplorer"
+
+    def discretize(self, df: pd.DataFrame) -> pd.DataFrame:
+        '''
+        Discretize the dataframe using pandas.qcut
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            The dataframe to discretize. Ignores the 'class' and 'predicted' columns.
+        '''
+        for col in df.columns:
+            if col not in ['class', 'predicted']:
+                continue
+            df[col] = pd.qcut(df[col], self.discretize_bins, labels=False,
+                              duplicates='drop')
 
     @forward(
         input_signatures=[
@@ -60,20 +80,40 @@ class DivExplorer(AbstractFunction):
         ],
     )
     def forward(self, df: pd.DataFrame) -> pd.DataFrame:
+        '''
+        Runs DivExplorer on the given dataframe.
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            The dataframe to run DivExplorer on. Must have 'class' and 'predicted' columns.
+        '''
+        if self.discretize:
+            df = self.discretize(df)
+
+        assert 'class' in df.columns, "Must have 'class' column"
+        assert 'predicted' in df.columns, "Must have 'predicted' column"
+
+        t1 = time.time()
         fp_diver = FP_DivergenceExplorer(
             df, true_class_name="class", 
             predicted_class_name="predicted", class_map={'N': 0, 'P': 1}
         )
+        print('a', time.time() - t1)
         result_divexplore = fp_diver.getFrequentPatternDivergence(
             min_support=self.min_support, metrics=[self.metric], # TODO: Add max_len to DivExplorer, and multiple metrics
         )
+        t1 = time.time()
         if self.top_k is not None:
             fp_divergence_metric = FP_Divergence(
                 result_divexplore, self.metric
             )
+            print('b', time.time() - t1)
+            t1 = time.time()
             topK_df_metric = fp_divergence_metric.getDivergenceTopKDf(
                 K=self.top_k, th_redundancy=self.th_redundancy
             )
+            print('c', time.time() - t1)
             return topK_df_metric
 
         return result_divexplore
